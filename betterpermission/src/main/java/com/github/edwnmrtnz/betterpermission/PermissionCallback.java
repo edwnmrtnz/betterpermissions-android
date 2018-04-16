@@ -7,14 +7,14 @@ public interface PermissionCallback {
     void onPermissionsGranted();
 
     /**
-     * Indicated all granted and declined permissions
+     * Indicates each granted and declined permissions.
      * @param grantedPermissions - holds granted permissions.
      * @param declinedPermissions - holds declined permissions.
      */
     void onIndividualPermissions(String [] grantedPermissions, String [] declinedPermissions);
 
     /**
-     * Indicates that all permissions was declined.
+     * Indicates that all permission has been declined.
      * */
     void onPermissionsDeclined();
 }
