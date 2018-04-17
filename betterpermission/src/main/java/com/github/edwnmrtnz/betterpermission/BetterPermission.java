@@ -42,7 +42,9 @@ public class BetterPermission {
     }
 
     private void requestPermissions() {
-        if(permissions == null || permissions.length == 0) throw new NullPointerException("Please add a valid permissions via Constructor(context, permissions)");
+        if(permissions == null || permissions.length == 0) throw new NullPointerException("Please add a valid permissions via setPermissions(...)");
+
+        if(context == null) throw new NullPointerException("Context cannot be null. Please pass a valid context via constructor(Context)");
 
         checkPermissionsExistenceInManifest();
 
