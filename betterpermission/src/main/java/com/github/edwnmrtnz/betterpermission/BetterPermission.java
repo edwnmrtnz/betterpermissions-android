@@ -52,7 +52,11 @@ public class BetterPermission {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         switch (requestCode){
             case REQUEST_CODE:{
+
                 handleResult(permissions, grantResults);
+
+                this.permissions = null;
+
                 break;
             }
         }
