@@ -48,11 +48,12 @@ public class BetterPermission {
 
         checkPermissionsExistenceInManifest();
 
-
         List<String> filteredPermissions = filterNotGrantedPermissions();
 
         if(filteredPermissions.size() > 0){
             ActivityCompat.requestPermissions((Activity) context, filteredPermissions.toArray(new String[filteredPermissions.size()]), REQUEST_CODE);
+        }else{
+            if(callback != null) callback.allPermissionsAreAlreadyGranted();
         }
     }
 
@@ -83,23 +84,24 @@ public class BetterPermission {
             }
         }
 
-        if(grantedPermissions.size() == _permissions.length){
-            callback.onPermissionsGranted();
-        } else if(grantedPermissions.size() == 0){
-            callback.onPermissionsDeclined();
-        } else{
-            String [] grantedPermissionsArr = grantedPermissions.toArray(new String[grantedPermissions.size()]);
+        if(callback != null){
+            if(grantedPermissions.size() == _permissions.length){
+                callback.onPermissionsGranted();
+            } else if(grantedPermissions.size() == 0){
+                callback.onPermissionsDeclined();
+            } else{
+                String [] grantedPermissionsArr = grantedPermissions.toArray(new String[grantedPermissions.size()]);
 
-            String [] deniedPermissionsArr = deniedPermissions.toArray(new String[deniedPermissions.size()]);
+                String [] deniedPermissionsArr = deniedPermissions.toArray(new String[deniedPermissions.size()]);
 
-            callback.onIndividualPermissions(grantedPermissionsArr, deniedPermissionsArr);
+                callback.onIndividualPermissions(grantedPermissionsArr, deniedPermissionsArr);
+            }
         }
     }
 
     /**
      * Filters not granted permissions
      * */
-
     private List<String> filterNotGrantedPermissions() {
         List<String> filteredPermissions = new ArrayList<>();
         for(String permission : permissions){
