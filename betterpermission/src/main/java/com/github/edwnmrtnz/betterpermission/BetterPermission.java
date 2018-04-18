@@ -48,7 +48,12 @@ public class BetterPermission {
 
         checkPermissionsExistenceInManifest();
 
-        ActivityCompat.requestPermissions((Activity) context, permissions, REQUEST_CODE);
+
+        List<String> filteredPermissions = filterNotGrantedPermissions();
+
+        if(filteredPermissions.size() > 0){
+            ActivityCompat.requestPermissions((Activity) context, filteredPermissions.toArray(new String[filteredPermissions.size()]), REQUEST_CODE);
+        }
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
@@ -90,6 +95,21 @@ public class BetterPermission {
             callback.onIndividualPermissions(grantedPermissionsArr, deniedPermissionsArr);
         }
     }
+
+    /**
+     * Filters not granted permissions
+     * */
+
+    private List<String> filterNotGrantedPermissions() {
+        List<String> filteredPermissions = new ArrayList<>();
+        for(String permission : permissions){
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                filteredPermissions.add(permission);
+            }
+        }
+        return filteredPermissions;
+    }
+
 
     /**
      * Check if permission is actually declared inside the
