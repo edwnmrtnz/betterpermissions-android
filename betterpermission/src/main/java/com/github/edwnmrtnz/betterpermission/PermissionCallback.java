@@ -1,6 +1,12 @@
 package com.github.edwnmrtnz.betterpermission;
 
 public interface PermissionCallback {
+
+    /**
+     * Indicates that alll permissions are already granted
+     * */
+    void allPermissionsAreAlreadyGranted();
+
     /**
      * Indicates that all permissions has been granted.
      * */
@@ -17,4 +23,5 @@ public interface PermissionCallback {
      * Indicates that all permission has been declined.
      * */
     void onPermissionsDeclined();
+
 }
