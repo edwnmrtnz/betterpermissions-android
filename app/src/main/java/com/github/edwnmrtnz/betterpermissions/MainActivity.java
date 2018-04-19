@@ -22,9 +22,13 @@ public class MainActivity extends AppCompatActivity {
 
         betterPermission = new BetterPermission(this);
 
-        betterPermission
-                .setPermissions(Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_EXTERNAL_STORAGE)
+        betterPermission.setPermissions(Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .requestPermissions(new PermissionCallback() {
+                    @Override
+                    public void allPermissionsAreAlreadyGranted() {
+                        Log.e(TAG, "All pemrissions are already granted");
+                    }
+
                     @Override
                     public void onPermissionsGranted() {
                         Log.d(TAG, "onPermissionsGranted: ");
