@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BetterPermission {
@@ -19,7 +20,7 @@ public class BetterPermission {
 
     private Context context;
 
-    private String[] permissions;
+    private List<String> permissions;
 
     private PermissionCallback callback;
 
@@ -28,7 +29,7 @@ public class BetterPermission {
     }
 
     public BetterPermission setPermissions(String...permissions){
-        this.permissions = permissions;
+        this.permissions = Arrays.asList(permissions);
         return this;
     }
 
@@ -42,7 +43,7 @@ public class BetterPermission {
     }
 
     private void requestPermissions() {
-        if(permissions == null || permissions.length == 0) throw new NullPointerException("Please add a valid permissions via setPermissions(...)");
+        if(permissions == null || permissions.size() == 0) throw new NullPointerException("Please add a valid permissions via setPermissions(...)");
 
         if(context == null) throw new NullPointerException("Context cannot be null. Please pass a valid context via constructor(Context)");
 
@@ -53,8 +54,15 @@ public class BetterPermission {
         if(filteredPermissions.size() > 0){
             ActivityCompat.requestPermissions((Activity) context, filteredPermissions.toArray(new String[filteredPermissions.size()]), REQUEST_CODE);
         }else{
-            if(callback != null) callback.allPermissionsAreAlreadyGranted();
+            if(callback != null)  {
+                callback.allPermissionsAreAlreadyGranted();
+                clearPermissions();
+            }
         }
+    }
+
+    private void clearPermissions() {
+        permissions.clear();
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
@@ -97,6 +105,7 @@ public class BetterPermission {
                 callback.onIndividualPermissions(grantedPermissionsArr, deniedPermissionsArr);
             }
         }
+        clearPermissions();
     }
 
     /**
