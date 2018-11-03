@@ -22,7 +22,9 @@ public class BetterPermission {
 
     private List<String> permissions;
 
-    private PermissionCallback callback;
+    private PermissionCallback permissionCallback;
+
+    private SimplePermissionCallback simplePermissionCallback;
 
     public BetterPermission(Context context) {
         this.context = context;
@@ -34,7 +36,12 @@ public class BetterPermission {
     }
 
     public BetterPermission requestPermissions(PermissionCallback permissionCallback){
-        this.callback = permissionCallback;
+        this.permissionCallback = permissionCallback;
+        return this;
+    }
+
+    public BetterPermission requestPermissions(SimplePermissionCallback simplePermissionCallback) {
+        this.simplePermissionCallback = simplePermissionCallback;
         return this;
     }
 
@@ -54,10 +61,13 @@ public class BetterPermission {
         if(filteredPermissions.size() > 0){
             ActivityCompat.requestPermissions((Activity) context, filteredPermissions.toArray(new String[filteredPermissions.size()]), REQUEST_CODE);
         }else{
-            if(callback != null)  {
-                callback.allPermissionsAreAlreadyGranted();
-                clearPermissions();
+            if(permissionCallback != null)  {
+                permissionCallback.allPermissionsAreAlreadyGranted();
             }
+            if(simplePermissionCallback != null) {
+                simplePermissionCallback.onGranted();
+            }
+            clearPermissions();
         }
     }
 
@@ -92,19 +102,32 @@ public class BetterPermission {
             }
         }
 
-        if(callback != null){
-            if(grantedPermissions.size() == _permissions.length){
-                callback.onPermissionsGranted();
-            } else if(grantedPermissions.size() == 0){
-                callback.onPermissionsDeclined();
-            } else{
-                String [] grantedPermissionsArr = grantedPermissions.toArray(new String[grantedPermissions.size()]);
+        if(grantedPermissions.size() == _permissions.length) {
 
-                String [] deniedPermissionsArr = deniedPermissions.toArray(new String[deniedPermissions.size()]);
+            if(permissionCallback != null)
+                permissionCallback.onPermissionsGranted();
 
-                callback.onIndividualPermissions(grantedPermissionsArr, deniedPermissionsArr);
-            }
+            if(simplePermissionCallback != null)
+                simplePermissionCallback.onGranted();
+
+        } else if(grantedPermissions.size() == 0) {
+
+            if(permissionCallback != null)
+                permissionCallback.onPermissionsDeclined();
+
+            if(simplePermissionCallback != null)
+                simplePermissionCallback.onGranted();
+
+        } else {
+            String [] grantedPermissionsArr = grantedPermissions.toArray(new String[grantedPermissions.size()]);
+
+            String [] deniedPermissionsArr = deniedPermissions.toArray(new String[deniedPermissions.size()]);
+
+            if(permissionCallback != null) permissionCallback.onIndividualPermissions(grantedPermissionsArr, deniedPermissionsArr);
+
+            if(simplePermissionCallback != null) simplePermissionCallback.onDeclined();
         }
+
         clearPermissions();
     }
 
