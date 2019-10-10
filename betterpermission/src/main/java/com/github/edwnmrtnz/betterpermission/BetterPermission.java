@@ -21,7 +21,7 @@ public class BetterPermission {
 
     private Context context;
 
-    private List<String> permissions;
+    private ArrayList<String> permissions;
 
     private PermissionCallback permissionCallback;
 
@@ -32,7 +32,7 @@ public class BetterPermission {
     }
 
     public BetterPermission setPermissions(String...permissions){
-        this.permissions = Arrays.asList(permissions);
+        this.permissions = new ArrayList<>(Arrays.asList(permissions));
         return this;
     }
 
