@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,32 @@ public class BetterPermission {
 
     public void execute(){
         requestPermissions();
+    }
+
+    public void executeFromFragment(Fragment fragment) {
+        requestPermissionsFromFragment(fragment);
+    }
+
+    private void requestPermissionsFromFragment(Fragment fragment) {
+        if(permissions == null || permissions.size() == 0) throw new NullPointerException("Please add a valid permissions via setPermissions(...)");
+
+        if(context == null) throw new NullPointerException("Context cannot be null. Please pass a valid context via constructor(Context)");
+
+        checkPermissionsExistenceInManifest();
+
+        List<String> filteredPermissions = filterNotGrantedPermissions();
+
+        if(filteredPermissions.size() > 0){
+            fragment.requestPermissions(filteredPermissions.toArray(new String[filteredPermissions.size()]), REQUEST_CODE);
+        }else{
+            if(permissionCallback != null)  {
+                permissionCallback.allPermissionsAreAlreadyGranted();
+            }
+            if(simplePermissionCallback != null) {
+                simplePermissionCallback.onGranted();
+            }
+            clearPermissions();
+        }
     }
 
     private void requestPermissions() {
